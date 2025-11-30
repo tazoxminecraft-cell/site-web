@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin - WINTER 808STEPS</title>
+  <link rel="stylesheet" href="style.css" />
+ </head>
+ <body class="theme-winter">
+  <header class="site-header">
+    <div class="container">
+      <h1 class="logo"><a href="index.html"><img src="images/logo-winter.png" alt="WINTER 808STEPS" class="site-logo winter"/></a></h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Admin - Commandes & Éditeur</h2>
+    <div style="display:flex; gap:20px; align-items:flex-start;">
+      <div style="flex:1; max-inline-size:480px;">
+        <h3>Publier un produit</h3>
+        <form id="product-form">
+          <label>ID (slug)<br><input id="prod-id" required></label>
+          <label>Nom<br><input id="prod-name" required></label>
+          <label>Prix (€)<br><input id="prod-price" type="number" min="0" required></label>
+          <label>Description<br><textarea id="prod-desc"></textarea></label>
+          <label>Image (upload)</label>
+          <div id="prod-dropzone" class="drop-zone">Glisser-déposer une image ici ou cliquez pour sélectionner
+            <input id="prod-image" type="file" accept="image/*" style="inline-size:1px; block-size:1px; opacity:0; position: absolute; inset-inline-start:-9999px;"/>
+          </div>
+          <img id="prod-preview" src="" style="display:none; inline-size:100px; block-size:100px; object-fit:contain; margin-block-start:8px;" alt="Aperçu image"/>
+          <label>Variantes (JSON array)<br><textarea id="prod-vars" placeholder='[{"id":"tshirt-s","size":"S","color":"Noir","stock":10}]'></textarea></label>
+          <div style="margin-block-start:12px;"><button class="primary" id="publish-btn">Publier</button> <button type="button" id="logout" class="secondary">Déconnexion</button></div>
+        </form>
+        <div style="margin-block-start:10px;">
+          <small>Astuce: Clique <em>Modifier</em> sur un produit pour pré-remplir ce formulaire.</small>
+        </div>
+        <div style="margin-block-start:16px;">
+          <h4>Thème</h4>
+          <label><input type="checkbox" id="theme-toggle"> Activer thème hiver (Noël)</label>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <h3>Commandes</h3>
+        <div id="admin-orders"></div>
+      </div>
+        <div style="flex-basis: 340px;">
+          <h3>Produits</h3>
+          <div id="admin-products-list"></div>
+          <div style="margin-block-start:10px;"><button id="refresh-products" class="secondary">Rafraîchir produits</button></div>
+          <h4 style="margin-block-start:16px">Produits mis en avant</h4>
+          <div class="admin-featured-list" id="admin-featured"></div>
+        </div>
+    </div>
+  </main>
+
+  <script>
+    async function apiFetch(url, opts={}){
+      const token = localStorage.getItem('808steps_admin_token');
+      const headers = opts.headers || {};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      opts.headers = headers;
+      const res = await fetch(url, opts);
+      if (res.status === 401) { localStorage.removeItem('808steps_admin_token'); window.location.href = 'admin-login.html'; }
+      return res;
+    }
+    async function loadOrders(){
+      const res = await apiFetch('/api/admin/orders');
+      const data = await res.json();
+      const root = document.getElementById('admin-orders');
+      if (!data || !data.length) return root.innerText = 'Aucune commande';
+      root.innerHTML = data.map(o => `<div style=\"border:1px solid #eee; padding:12px; margin-block-end:12px;\">
+        <p><strong>${o.order_number}</strong> - ${o.status} - Total: €${o.total}</p>
+        <p>Client: ${o.customer.name} (${o.customer.email})</p>
+        <p>Articles: ${o.items.map(it=>it.qty + ' x ' + it.id).join(', ')}</p>
+        <div><label>Tracking: <input data-id=\"${o.order_id}\" class=\"tracking-input\"/></label>
+        <button data-id=\"${o.order_id}\" class=\"ship-btn\">Marquer expédiée</button></div>
+      </div>`).join('');
+      document.querySelectorAll('.ship-btn').forEach(btn => btn.addEventListener('click', async (e)=>{
+        const id = e.target.getAttribute('data-id');
+        const tracking = document.querySelector(`.tracking-input[data-id='${id}']`).value;
+        await apiFetch('/api/admin/ship', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({order_id:id, carrier:'Colissimo', tracking})});
+        showToast && showToast('Commande marquée comme expédiée', 'success');
+        loadOrders();
+      }));
+    }
+
+    async function loadConfig(){
+      const r = await fetch('/api/config');
+      const cfg = await r.json();
+      document.getElementById('theme-toggle').checked = (cfg.theme === 'winter');
+    }
+
+    document.getElementById('product-form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      try {
+        const id = document.getElementById('prod-id').value.trim();
+        const name = document.getElementById('prod-name').value.trim();
+        const price = parseFloat(document.getElementById('prod-price').value);
+        const desc = document.getElementById('prod-desc').value.trim();
+        const variants = JSON.parse(document.getElementById('prod-vars').value || '[]');
+        // prefer already uploaded URL (from dropzone) if present
+        const imageUrlHidden = document.getElementById('prod-image-url') ? document.getElementById('prod-image-url').value : null;
+        let imageUrl = null;
+        if (imageUrlHidden) {
+          imageUrl = imageUrlHidden;
+        } else {
+          const file = document.getElementById('prod-image').files[0];
+          if (file) {
+          const form = new FormData();
+          form.append('image', file);
+          const up = await apiFetch('/api/admin/upload', {method:'POST', body: form});
+          const upd = await up.json();
+          imageUrl = upd.url;
+        }
+        }
+        const payload = { id, name, price, description: desc, images: imageUrl ? [imageUrl] : [], variants };
+        const res = await apiFetch('/api/admin/products', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Erreur');
+        showToast && showToast('Produit publié', 'success');
+      } catch(err) { showToast && showToast('Erreur: ' + err.message, 'error'); }
+    });
+
+    // Dropzone handling: click, drag, drop, upload
+    (function(){
+      const drop = document.getElementById('prod-dropzone');
+      const fileInput = document.getElementById('prod-image');
+      if (!drop || !fileInput) return;
+      drop.addEventListener('click', () => fileInput.click());
+      drop.addEventListener('dragover', (e)=>{ e.preventDefault(); drop.classList.add('dragover'); });
+      drop.addEventListener('dragleave', ()=>{ drop.classList.remove('dragover'); });
+      drop.addEventListener('drop', async (e)=>{
+        e.preventDefault(); drop.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (!files || !files.length) return;
+        const f = files[0];
+        // show instant preview
+        const prev = document.getElementById('prod-preview'); if (prev) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+        // upload
+        try {
+          const form = new FormData(); form.append('image', f);
+          const up = await apiFetch('/api/admin/upload', { method:'POST', body: form });
+          const data = await up.json();
+          if (!up.ok) throw new Error(data.message||'Erreur upload');
+          // set hidden field for form submission
+          let hidden = document.getElementById('prod-image-url');
+          if (!hidden) { hidden = document.createElement('input'); hidden.type='hidden'; hidden.id='prod-image-url'; hidden.name='prod-image-url'; document.getElementById('product-form').appendChild(hidden); }
+          hidden.value = data.url;
+          // set preview to final url
+          if (prev) prev.src = data.url;
+          } catch (err) { showToast && showToast('Upload failed: ' + err.message, 'error'); }
+      });
+    })();
+
+    document.getElementById('theme-toggle').addEventListener('change', async (e)=>{
+      const cfg = { theme: e.target.checked ? 'winter' : 'default' };
+      await apiFetch('/api/admin/config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(cfg) });
+      showToast && showToast('Thème mis à jour', 'success');
+      window.location.reload();
+    });
+
+    document.getElementById('logout').addEventListener('click', ()=>{ localStorage.removeItem('808steps_admin_token'); window.location.href = 'admin-login.html'; });
+
+    // initial checks
+    (async ()=>{
+      const token = localStorage.getItem('808steps_admin_token');
+      if (!token) return window.location.href = 'admin-login.html';
+      await loadConfig();
+      await loadOrders();
+      if (window.initAdminProductList) await window.initAdminProductList();
+      if (window.initAdminFeaturedList) await window.initAdminFeaturedList();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "winter-808steps-server",
+  "version": "0.1.0",
+  "description": "Prototype backend for WINTER 808STEPS (clothing store)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.4",
+    "stripe": "^12.17.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "multer": "^1.4.3",
+    "jsonwebtoken": "^8.5.1"
+  }
+}

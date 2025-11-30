@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin login - WINTER 808STEPS</title>
+  <link rel="stylesheet" href="style.css" />
+  <style> .login-card{ max-width:420px; margin-inline:auto; padding:20px; background:#fff; border-radius:10px; box-shadow:0 4px 30px rgba(0,0,0,0.06) } </style>
+ </head>
+ <body class="theme-winter">
+  <main class="container">
+    <div class="login-card">
+      <h2>Connexion administrateur</h2>
+      <form id="login-form">
+        <label>Email
+        <input type="email" id="email" value="support808steps@gmail.com" required></label>
+        <label>Mot de passe
+        <input type="password" id="password" value="808steps.fr" required></label>
+        <div style="margin-top:12px; display:flex; gap:8px;">
+          <button class="primary" id="login-btn" type="submit">Se connecter</button>
+          <button id="google-btn" type="button" class="secondary">Se connecter avec Google</button>
+        </div>
+      </form>
+      <p style="margin-top:8px">Pas de compte ? <a href="#" id="create-account-link">Créer un compte</a></p>
+      <form id="register-form" style="display:none; margin-top:8px;" >
+        <label>Email<br><input type="email" id="reg-email" required></label>
+        <label>Mot de passe<br><input type="password" id="reg-password" required></label>
+        <div style="margin-top:8px;"><button class="primary" id="register-btn" type="button">Créer le compte</button> <button id="register-cancel" type="button" class="secondary">Annuler</button></div>
+      </form>
+      <p style="margin-top:8px; font-size:12px; color:#666">Astuce: ce système est un prototype. Pour la production, configure OAuth ou un système d'auth réel.</p>
+    </div>
+  </main>
+  <script src="scripts.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        const res = await fetch('/api/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email,password}) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Erreur connexion');
+        localStorage.setItem('808steps_admin_token', data.token);
+        window.location.href = 'admin.html';
+      } catch (err) { showToast && showToast(err.message || 'Erreur', 'error'); }
+    });
+    document.getElementById('google-btn').addEventListener('click', async () => {
+      // Simulated Google sign-in: in a real app, you'd use Google OAuth flow.
+      const email = prompt('Entrez votre adresse Google (demo):', 'support808steps@gmail.com');
+      if (!email) return;
+      try {
+        const res = await fetch('/api/auth/google', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email}) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Erreur Google');
+        localStorage.setItem('808steps_admin_token', data.token);
+        window.location.href = 'admin.html';
+      } catch (err) { showToast && showToast(err.message || 'Erreur', 'error'); }
+    });
+
+    document.getElementById('create-account-link').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('register-form').style.display = 'block'; });
+    document.getElementById('register-cancel').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('register-form').style.display = 'none'; });
+    document.getElementById('register-btn').addEventListener('click', async () => {
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      if (!email || !password) return showToast && showToast('Email & mot de passe requis', 'error');
+      try {
+        const res = await fetch('/api/auth/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email, password}) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Erreur');
+        localStorage.setItem('808steps_admin_token', data.token);
+        window.location.href = 'admin.html';
+      } catch (err) { showToast && showToast('Erreur: ' + err.message, 'error'); }
+    });
+  </script>
+</body>
+</html>

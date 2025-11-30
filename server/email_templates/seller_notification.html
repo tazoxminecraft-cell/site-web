@@ -1,0 +1,23 @@
+<html>
+  <body>
+    <p>Bonjour,</p>
+    <p>Une nouvelle commande a été passée sur votre site.</p>
+    <p><strong>Numéro de commande :</strong> {{order_number}}</p>
+    <p><strong>Date :</strong> {{order_date}}</p>
+    <p><strong>Client :</strong> {{customer_name}} ({{customer_email}}, {{customer_phone}})</p>
+    <p><strong>Adresse de livraison :</strong><br/>
+      {{street}}<br/>
+      {{postal_code}} {{city}}, {{country}}</p>
+    <p><strong>Articles :</strong><br/>
+      {{items}}
+    </p>
+    <p><strong>Total (produit) :</strong> {{subtotal}} €</p>
+    <p><strong>Frais de livraison :</strong> {{shipping}} €</p>
+    <p><strong>Taxes :</strong> {{taxes}} €</p>
+    <p><strong>Total payé :</strong> {{total}} €</p>
+    <p><strong>Moyen de paiement :</strong> {{payment_method}}</p>
+    <p><strong>Statut :</strong> Payée</p>
+    <p>Rends-toi dans l’admin pour les détails complets et l’expédition.</p>
+    <p>Cordialement,<br/>Ton site e-commerce</p>
+  </body>
+</html>

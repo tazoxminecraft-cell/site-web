@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none">
+  <rect width="100%" height="100%" fill="#fff"/>
+  <g fill="#F1F4EE" stroke="#D1D8CA" stroke-width="6">
+    <ellipse cx="200" cy="120" rx="90" ry="40"/>
+    <rect x="140" y="140" width="120" height="60" rx="8"/>
+  </g>
+  <text x="50%" y="90%" fill="#333" font-size="18" text-anchor="middle">Sneaker</text>
+</svg>

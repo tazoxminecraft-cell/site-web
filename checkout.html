@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checkout - WINTER 808STEPS</title>
+  <link rel="stylesheet" href="style.css" />
+ </head>
+ <body class="theme-winter">
+  <header class="site-header">
+    <div class="container">
+      <h1 class="logo"><a href="index.html"><img src="images/logo-winter.png" alt="WINTER 808STEPS" class="site-logo winter"/></a></h1>
+      <nav class="main-nav">
+        <a href="homme.html">Homme</a>
+        <a href="femme.html">Femme</a>
+        <!-- 'Enfant' collection removed -->
+        <a href="accessoires.html">Accessoires</a>
+        <a href="chaussures.html">Chaussures</a>
+        <a href="promotions.html">Promotions</a>
+      </nav>
+      <a class="cart-link" href="cart.html" title="Voir le panier">🛒 <span id="cart-count">0</span></a>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Checkout</h2>
+    <div class="checkout-steps">
+      <div id="step-address" class="step">
+        <h3>Adresse</h3>
+        <form id="address-form">
+          <div>
+            <label>Prénom</label>
+            <input type="text" id="first_name" required />
+          </div>
+          <div>
+            <label>Nom</label>
+            <input type="text" id="last_name" required />
+          </div>
+          <div>
+            <label>Téléphone</label>
+            <input type="tel" id="phone" required />
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" id="email" required />
+          </div>
+          <div>
+            <label>Adresse</label>
+            <input type="text" id="line1" required />
+          </div>
+          <div>
+            <label>Ligne 2</label>
+            <input type="text" id="line2" />
+          </div>
+          <div>
+            <label>Code postal</label>
+            <input type="text" id="postal_code" required />
+          </div>
+          <div>
+            <label>Ville</label>
+            <input type="text" id="city" required />
+          </div>
+          <div>
+            <label>Pays</label>
+            <input type="text" id="country" required />
+          </div>
+          <button type="button" id="to-shipping" class="primary">Continuer</button>
+        </form>
+      </div>
+
+      <div id="step-shipping" class="step" style="display:none;">
+        <h3>Livraison</h3>
+        <div>
+          <label><input type="radio" name="shipping" value="standard" checked/> Standard — 5€ — 4-6 jours</label>
+        </div>
+        <div>
+          <label><input type="radio" name="shipping" value="express"/> Express — 12€ — 1-2 jours</label>
+        </div>
+        <button type="button" id="to-payment" class="primary">Continuer</button>
+      </div>
+
+      <div id="step-payment" class="step" style="display:none;">
+        <h3>Paiement</h3>
+        <div>
+          <label><input type="radio" name="payment_method" value="paypal" checked/> PayPal</label>
+        </div>
+        <div>
+          <label><input type="radio" name="payment_method" value="card"/> Carte bancaire</label>
+        </div>
+        <div id="card-form" style="display:none;">
+          <p>Le champ carte se contente pour l'instant d'une simulation. Utilise Stripe/PSP en production.</p>
+        </div>
+        <button id="pay-now" type="button" class="primary">Payer maintenant</button>
+      </div>
+
+      <div id="step-confirmation" class="step" style="display:none;">
+        <h3>Confirmation</h3>
+        <p id="confirmation-text"></p>
+        <a id="thank-you-link" class="primary" href="merci.html">Voir le récapitulatif</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">&copy; 2025 - Tous droits réservés</div>
+  </footer>
+
+    <script src="https://js.stripe.com/v3/" async></script>
+    <script>
+      // Inject STRIPE_PUBLISHABLE_KEY if you have it; otherwise frontend will fallback to simulated flow
+      window.STRIPE_PUBLISHABLE_KEY = '{{STRIPE_PUBLISHABLE}}';
+    </script>
+    <script src="scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+[
+  { "id": "tshirt-plain", "name": "T-shirt coupe droite", "price": 29, "images": ["/images/chair.svg"], "description": "T-shirt en coton, coupe droite — confortable et durable.", "variants": [{"id":"tshirt-plain-s","size":"S","color":"Blanc","stock":12},{"id":"tshirt-plain-m","size":"M","color":"Blanc","stock":8}] },
+  { "id": "veste-legere", "name": "Veste légère", "price": 89, "images": ["/images/shelf.svg"], "description": "Veste légère coupe urbain, membrane protectrice.", "variants": [{"id":"veste-38","size":"38","color":"Noir","stock":6}]},
+  { "id": "robe-fluide", "name": "Robe fluide", "price": 49, "images": ["/images/lamp.svg"], "description": "Robe fluide, idéale pour l'été.", "variants": [{"id":"robe-36","size":"36","color":"Beige","stock":3}] },
+  { "id": "baskets-blanches", "name": "Baskets blanches", "price": 89, "images": ["/images/table.svg"], "description": "Baskets minimalistes, semelle confortable.", "variants": [{"id":"sneaker-40","size":"40","color":"Blanc","stock":10}]},
+  { "id": "jean-slim", "name": "Jean slim", "price": 59, "images": ["/images/table.svg"], "description": "Jean slim élastique.", "variants": [{"id":"jean-32","size":"32","color":"Bleu","stock":12}]},
+  { "id": "casquette", "name": "Casquette", "price": 19, "images": ["/images/box.svg"], "description": "Casquette réglable.", "variants": [{"id":"cap-one","size":"One","color":"Noir","stock":21}]},
+  { "id": "echarpe", "name": "Écharpe", "price": 24, "images": ["/images/basket.svg"], "description": "Écharpe en laine.", "variants": [{"id":"echarpe-uni","size":"One","color":"Gris","stock":20}]},
+  { "id": "sandales", "name": "Sandales", "price": 39, "images": ["/images/plantpot.svg"], "description": "Sandales confortables.", "variants": [{"id":"sandales-39","size":"39","color":"Marron","stock":5}]},
+  
+]

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none">
+  <rect width="100%" height="100%" fill="#fff"/>
+  <g fill="#fcebea" stroke="#f7d0d5" stroke-width="6">
+    <ellipse cx="160" cy="110" rx="50" ry="30"/>
+    <rect x="180" y="130" width="20" height="130" rx="5"/>
+  </g>
+  <text x="50%" y="90%" fill="#333" font-size="18" text-anchor="middle">Lampe côté</text>
+</svg>
