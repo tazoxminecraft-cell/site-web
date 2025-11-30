@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin login - WINTER 808STEPS</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="images/logo-winter.png" type="image/png">
   <style> .login-card{ max-width:420px; margin-inline:auto; padding:20px; background:#fff; border-radius:10px; box-shadow:0 4px 30px rgba(0,0,0,0.06) } </style>
  </head>
  <body class="theme-winter">
@@ -13,9 +14,9 @@
       <h2>Connexion administrateur</h2>
       <form id="login-form">
         <label>Email
-        <input type="email" id="email" value="support808steps@gmail.com" required></label>
+        <input type="email" id="email" value="support@winter808steps.com" required></label>
         <label>Mot de passe
-        <input type="password" id="password" value="808steps.fr" required></label>
+        <input type="password" id="password" value="winter808steps.fr" required></label>
         <div style="margin-top:12px; display:flex; gap:8px;">
           <button class="primary" id="login-btn" type="submit">Se connecter</button>
           <button id="google-btn" type="button" class="secondary">Se connecter avec Google</button>
@@ -46,7 +47,7 @@
     });
     document.getElementById('google-btn').addEventListener('click', async () => {
       // Simulated Google sign-in: in a real app, you'd use Google OAuth flow.
-      const email = prompt('Entrez votre adresse Google (demo):', 'support808steps@gmail.com');
+      const email = prompt('Entrez votre adresse Google (demo):', 'support@winter808steps.com');
       if (!email) return;
       try {
         const res = await fetch('/api/auth/google', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email}) });
